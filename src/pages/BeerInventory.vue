@@ -9,8 +9,14 @@
       :columns="columns"
       :selected.sync="selected"
       :pagination.sync="pagination"
+      :filter="search"
     >
       <template v-slot:top-right>
+        <q-input v-model="search" type="search" dense class="q-pr-md">
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
         <q-btn-dropdown
           split
           icon="add"
@@ -148,6 +154,7 @@ export default {
       pagination: {
         rowsPerPage: 0,
       },
+      search: '',
       columns: [
         {
           name: 'name',
