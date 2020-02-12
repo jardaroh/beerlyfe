@@ -206,5 +206,11 @@ export default {
       });
     },
   },
+
+  mounted() {
+    Beer.insert({
+      data: Beer.getStoredBeers(),
+    });
+  },
 };
 </script>
