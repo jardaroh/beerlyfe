@@ -4,7 +4,8 @@ A Quasar Framework app
 
 ## Open in browser from disk
 The application works standalone as a static site loaded from your local disk.
-Just open a new tab and `CTRL+O` to open.
+Just open a new tab and `CTRL+O` to open `index.html` located in `dist/spa/`.
+Alternatively, follow the instructions below to serve the application with quasar CLI
 
 ## Install the dependencies
 ```bash
