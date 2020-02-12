@@ -71,13 +71,47 @@
           <q-td key="name" :props="props">
             {{ props.row.name }}
             <q-popup-edit v-model="props.row.name">
-              <q-input v-model="props.row.name" dense autofocus />
+              <q-input
+                v-model="props.row.name"
+                dense autofocus
+                @input="update(props.row, $event)"
+              />
             </q-popup-edit>
+          </q-td>
+          <q-td key="volume" :props="props">
+            {{ props.row.volume }} l
+            <q-popup-edit v-model="props.row.volume">
+              <q-input
+                v-model="props.row.volume"
+                type="number"
+                autofocus
+                @input="update(props.row, $event)"
+              />
+            </q-popup-edit>
+          </q-td>
+          <q-td key="units" :props="props">
+            {{ props.row.units }}
+            <q-popup-edit v-model="props.row.units">
+              <q-input
+                v-model="props.row.units"
+                type="number"
+                autofocus
+                @input="update(props.row, $event)"
+              />
+            </q-popup-edit>
+          </q-td>
+          <q-td key="total" :props="props">
+            {{ props.row.units * props.row.volume }}
           </q-td>
           <q-td key="percent" :props="props">
             {{ props.row.percent }} %
             <q-popup-edit v-model="props.row.percent">
-              <q-input v-model="props.row.percent" type="number" autofocus />
+              <q-input
+                v-model="props.row.percent"
+                type="number"
+                autofocus
+                @input="update(props.row, $event)"
+              />
             </q-popup-edit>
           </q-td>
         </q-tr>
@@ -89,6 +123,15 @@
               <span class="text-bold">Notes:</span>
               <!-- notes rendering is potentially unsafe with v-html -->
               <div v-html="props.row.notes"></div>
+              <q-popup-edit v-model="props.row.notes">
+                <q-editor
+                  v-model="props.row.notes"
+                  min-height="4rem"
+                  autofocus
+                  @input="update(props.row, $event)"
+                  @keyup.enter.stop
+                />
+              </q-popup-edit>
             </div>
           </q-td>
         </q-tr>
@@ -108,6 +151,22 @@
             v-model="nameInputValue"
             ref="nameInput"
             :rules="[val => !!val || 'Beer must have a name']"
+          />
+          <q-input
+            dense
+            type="number"
+            label="Volume"
+            v-model="volumeInputValue"
+            ref="volumeInput"
+            :rules="[val => !!val || 'Beer must be given a volume']"
+          />
+          <q-input
+            dense
+            type="number"
+            label="Units"
+            v-model="unitsInputValue"
+            ref="unitsInput"
+            :rules="[val => !!val || 'Must have at least one unit of beer']"
           />
           <q-input
             dense
@@ -149,6 +208,8 @@ export default {
       addDialog: false,
       selected: [],
       nameInputValue: '',
+      volumeInputValue: '',
+      unitsInputValue: '',
       percentInputValue: 0,
       notesInputValue: '',
       pagination: {
@@ -161,6 +222,26 @@ export default {
           label: 'Beer',
           field: (row) => row.name,
           align: 'left',
+          sortable: true,
+        },
+        {
+          name: 'volume',
+          label: 'Volume',
+          field: 'volume',
+          align: 'right',
+          sortable: true,
+        },
+        {
+          name: 'units',
+          label: 'Units',
+          field: 'units',
+          align: 'right',
+          sortable: true,
+        },
+        {
+          name: 'total',
+          label: 'Total',
+          align: 'right',
           sortable: true,
         },
         {
@@ -192,6 +273,8 @@ export default {
       await Beer.insert({
         data: {
           name: this.$refs.nameInput.value,
+          volume: this.$refs.volumeInput.value,
+          units: this.$refs.unitsInput.value,
           percent: this.$refs.percentInput.value,
           notes: this.$refs.notesInput.value,
         },
@@ -204,13 +287,18 @@ export default {
     formIsValid() {
       return (
         this.$refs.nameInput && this.$refs.percentInput
+        && this.$refs.volumeInput && this.$refs.unitsInput
         && this.$refs.nameInput.validate() && this.$refs.percentInput.validate()
+        && this.$refs.volumeInput.validate() && this.$refs.unitsInput.validate()
       );
     },
     removeSelected() {
       this.selected.forEach((beer) => {
         Beer.delete(beer.id);
       });
+    },
+    update(model) {
+      model.$save();
     },
   },
 

@@ -40,6 +40,8 @@ export default class Beer extends Model {
       name: this.string(null),
       percent: this.number(null),
       notes: this.string(null).nullable(),
+      volume: this.number(0.5),
+      units: this.number(1),
     };
   }
 }
